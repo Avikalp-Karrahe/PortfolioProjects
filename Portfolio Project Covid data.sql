@@ -1,4 +1,4 @@
---Covid 19 Data Exploration 
+-- Covid 19 Data Exploration 
 -- Dataset taken on 11th of April 2022
 
 Select *
@@ -24,14 +24,14 @@ order by 1,2
 
 Select Location, date, total_cases, total_deaths, (total_cases/population)*100 as PercentPopulationInfected
 From CovidDeaths
---Where location like '%India%'
+Where location like '%India%'
 order by 1,2
 
 -- Countries with Highest Infection Rate compared to Population
 
 Select Location, Population, MAX(total_cases) as HighestInfectionCount,  Max((total_cases/population))*100 as PercentPopulationInfected
 From CovidDeaths
---Where location like '%India%'
+Where location like '%India%'
 Group by Location, Population
 order by PercentPopulationInfected desc
 
@@ -39,13 +39,12 @@ order by PercentPopulationInfected desc
 
 Select Location, MAX(cast(Total_deaths as int)) as TotalDeathCount
 From CovidDeaths
---Where location like '%India%'
+Where location like '%India%'
 Where continent is not null 
 Group by Location
 order by TotalDeathCount desc
 
--- BREAKING THINGS DOWN BY CONTINENT
-
+-- Breaking down things by continent 
 -- Showing contintents with the highest death count per population
 
 Select continent, MAX(cast(Total_deaths as int)) as TotalDeathCount
@@ -53,11 +52,9 @@ From CovidDeaths
 Where continent is not null
 Group by continent
 order by TotalDeathCount desc
---DATA OF AUSTRALIA IS MISSING FROM THE DATASET
 
--- GLOBAL NUMBERS
-
---Date wise Death Percentage
+-- Global Numbers
+-- Date wise Death Percentage
 
 Select date, SUM(new_cases) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_Cases)*100 as DeathPercentage
 From CovidDeaths
@@ -80,7 +77,6 @@ as
 (
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.Location, dea.Date ) as RollingPeopleVaccinated
---, (RollingPeopleVaccinated/population)*100
 From CovidDeaths dea
 Join CovidVax vac
 	On dea.location = vac.location
@@ -105,7 +101,6 @@ RollingPeopleVaccinated numeric
 Insert into #PercentPopulationVaccinated
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.Location, dea.Date) as RollingPeopleVaccinated
---, (RollingPeopleVaccinated/population)*100
 From CovidDeaths dea
 Join CovidVax vac
 	On dea.location = vac.location
@@ -121,7 +116,6 @@ From #PercentPopulationVaccinated
 Create View PercentPopulationVaccinated as
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.Location, dea.Date) as RollingPeopleVaccinated
---, (RollingPeopleVaccinated/population)*100
 From CovidDeaths dea
 Join CovidVax vac
 	On dea.location = vac.location
