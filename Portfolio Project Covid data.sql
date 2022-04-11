@@ -1,8 +1,4 @@
-/*
-Covid 19 Data Exploration 
-Skills used: Joins, CTE's, Temp Tables, Windows Functions, Aggregate Functions, Creating Views, Converting Data Types
-*/
-
+--Covid 19 Data Exploration 
 -- Dataset taken on 11th of April 2022
 
 Select *
